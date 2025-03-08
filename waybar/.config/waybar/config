@@ -56,14 +56,6 @@
             "default": ["", "", ""]
         },
         "on-click": "pavucontrol"
-    },
-    "custom/ibus": {
-        "format": "{}",
-        "return-type": "json",
-        "exec": "$HOME/.config/sway/bin/ibus/display.sh",
-        "on-click": "ibus-setup",
-        "interval": "once",
-        "signal": 8
     }
 }
 
