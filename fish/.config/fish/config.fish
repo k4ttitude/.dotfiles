@@ -4,10 +4,10 @@ if status is-interactive
     set -gx EDITOR nvim
     set -gx VISUAL nvim
 
-
     # ---- paths ----
     fish_add_path /usr/local/bin
     fish_add_path $HOME/.local/bin
+    fish_add_path $HOME/.cargo/bin
 
     # pyenv
     pyenv init - | source
@@ -29,8 +29,8 @@ if status is-interactive
     bind yy fish_clipboard_copy
     bind p fish_clipboard_paste
 
-    bind -M insert \cl forward-bigword
-    bind -M insert \ch backward-kill-bigword
+    bind -M insert \ce forward-bigword
+    # bind -M insert \ch backward-kill-bigword
     bind -M insert \cn history-prefix-search-forward
     bind -M insert \cp history-prefix-search-backward
     bind -M insert \ck 'clear; commandline -f repaint'
@@ -48,6 +48,7 @@ if status is-interactive
     bind -M fzf -m insert d _fzf_search_directory
     bind -M fzf -m insert l _fzf_search_git_log
     bind -M fzf -m insert s _fzf_search_git_status
+    bind -M fzf -m insert z _fzf_search_zoxide
     bind -M fzf -m insert \e cancel-commandline
 end
 
