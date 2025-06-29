@@ -1,7 +1,7 @@
 * {
   border: none;
   border-radius: 0;
-  font-family: MesloLGSNerdFontMono;
+  font-family: "MesloLGS Nerd Font Mono", monospace;
   font-size: 13px;
   min-height: 0;
 }
@@ -16,8 +16,9 @@ window#waybar {
 
 #window {
   font-weight: bold;
-  font-family: MesloLGSNerdFontMono;
+  font-family: "MesloLGS Nerd Font Mono", monospace;
 }
+
 /*
 #workspaces {
     padding: 0 5px;
@@ -59,15 +60,13 @@ window#waybar {
   font-weight: bold;
 }
 
-#battery {
-}
+#battery {}
 
 #battery icon {
   color: red;
 }
 
-#battery.charging {
-}
+#battery.charging {}
 
 @keyframes blink {
   to {
@@ -85,27 +84,21 @@ window#waybar {
   animation-direction: alternate;
 }
 
-#cpu {
-}
+#cpu {}
 
-#memory {
-}
+#memory {}
 
-#network {
-}
+#network {}
 
 #network.disconnected {
   background: #f53c3c;
 }
 
-#pulseaudio {
-}
+#pulseaudio {}
 
-#pulseaudio.muted {
-}
+#pulseaudio.muted {}
 
-#tray {
-}
+#tray {}
 
 #custom-ibus {
   padding: 0 6px;
@@ -114,10 +107,12 @@ window#waybar {
   font-size: 14px;
   border-radius: 4px;
 }
+
 #custom-ibus.vi {
   background: #a33553;
   color: #fff;
 }
+
 #custom-ibus.en {
   background: #0088f7;
   color: #fff;
