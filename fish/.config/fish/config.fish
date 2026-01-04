@@ -10,7 +10,7 @@ if status is-interactive
     fish_add_path $HOME/.cargo/bin
 
     # pyenv
-    pyenv init - | source
+    # pyenv init - | source
 
     # java
     fish_add_path /usr/lib/jvm/java-11-openjdk/bin
