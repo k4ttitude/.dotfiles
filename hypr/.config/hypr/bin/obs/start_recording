@@ -1,0 +1,16 @@
+#!/bin/bash
+
+obs-cmd recording start 2>&1 | while IFS= read -r line; do
+  if echo "$line" | grep -q "Connection attempt 1 failed"; then
+    notify-send -t 2000 -u critical "OBS" "❌ OBS not running"
+    pkill -f "obs-cmd recording"
+    exit 1
+  fi
+done
+
+if [ $? -eq 0 ]; then
+  notify-send -t 2000 "OBS" "🟢 Recording started"
+else
+  notify-send -t 2000 -u critical "OBS" "❌ Failed to start recording"
+  exit 1
+fi
