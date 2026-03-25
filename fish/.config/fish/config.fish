@@ -8,6 +8,7 @@ if status is-interactive
     fish_add_path /usr/local/bin
     fish_add_path $HOME/.local/bin
     fish_add_path $HOME/.cargo/bin
+    fish_add_path $HOME/.bun/bin
 
     # pyenv
     # pyenv init - | source
@@ -19,6 +20,8 @@ if status is-interactive
     alias g=git
     alias p=pnpm
     alias nv=nvim
+    alias lg=lazygit
+    alias yz=yazi
 
     # aliases:dotfiles
     alias config='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
