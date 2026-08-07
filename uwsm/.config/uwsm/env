@@ -14,3 +14,5 @@ export QT_IM_MODULE=fcitx
 export GDK_BACKEND=wayland
 export SDL_VIDEODRIVER=wayland
 export _JAVA_AWT_WM_NONREPARENTING=1
+
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
