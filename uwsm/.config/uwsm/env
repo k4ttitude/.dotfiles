@@ -1,0 +1,16 @@
+# Sourced by uwsm before the compositor starts, so these reach both
+# Hyprland's children and systemd user units.
+# Migrated from hypr/.config/hypr/hyprland.conf `env =` lines.
+
+export XCURSOR_SIZE=24
+export HYPRCURSOR_SIZE=24
+
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export QT_QPA_PLATFORM="wayland;xcb"
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export QT_QPA_PLATFORMTHEME=qt5ct
+export QT_IM_MODULE=fcitx
+
+export GDK_BACKEND=wayland
+export SDL_VIDEODRIVER=wayland
+export _JAVA_AWT_WM_NONREPARENTING=1
