@@ -61,7 +61,8 @@ Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS enc
 6. **Configure Omarchy:**
    - `omarchy default terminal kitty`, since `SUPER + RETURN` opens foot by default.
    - `omarchy-setup-security-ssh-agent`. It replaces the `SSH_AUTH_SOCK` line that used to be in `uwsm/env`.
-   - **Input method:** add Bamboo next to `keyboard-us` in `fcitx5-configtool`. `SUPER + I` / `SUPER + SHIFT + I` cycle between them.
+   - **Input method:** `sudo pacman -S fcitx5-configtool` (Omarchy doesn't ship the GUI), then add Bamboo next to `keyboard-us`. `SUPER + CTRL + I` or fcitx5's own `CTRL + SPACE` switches between them.
+   - **Input method on the bar:** `omarchy plugin enable katt.input-method --after omarchy.keyboard-layout`. It shows EN / VI, and clicking it switches.
    - **Shell:** `chsh -s /usr/bin/fish`, then run `fisher update` inside fish.
    - **tmux:** move `~/.config/tmux/tmux.conf` (Omarchy's) into the `~/omarchy-defaults-*` folder so only your `~/.tmux.conf` applies.
    - **Wallpaper:** copy `~/.config/hypr/backgrounds/interstellar.jpg` into `~/.config/omarchy/backgrounds/<current theme>/` and pick it with `SUPER + CTRL + W`.
@@ -69,7 +70,7 @@ Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS enc
 7. **Log out and back in.** `uwsm/env` is only read at login.
 8. **Check:**
    - `omarchy menu keybindings --print` shows no key bound twice.
-   - `SUPER + SPACE` opens vicinae, and `SUPER + H/J/K/L` move focus.
+   - `ALT + SPACE` opens vicinae, and `SUPER + H/J/K/L` move focus.
    - Window corners are rounded, and kitty recolors when you switch themes (`SUPER + CTRL + T`).
    - `kitty_mod+h` opens the scrollback in nvim.
 9. **Games:** `yay -S steam`, then add `/mnt/steam/SteamLibrary` under *Steam > Settings > Storage*.
@@ -93,14 +94,15 @@ Personal binds are in `hypr/.config/hypr/bindings.lua`. Everything else is Omarc
 
 | Keys | Action | Omarchy's action it displaced |
 |---|---|---|
-| `SUPER + SPACE`, `ALT + SPACE` | vicinae | Omarchy menu → `SUPER + ALT + SPACE` |
-| `SUPER + ALT + SPACE` | Omarchy menu | Apps launcher (vicinae covers it) |
+| `ALT + SPACE` | vicinae | — (`SUPER + SPACE` stays the Omarchy menu) |
 | `SUPER + H/J/K/L` | Focus left/down/up/right | J toggle split, K cheatsheet, L cycle layout (moved below) |
 | `SUPER + SHIFT + H/J/K/L` | Swap window | — (same as Omarchy's `SUPER + SHIFT + arrows`) |
 | `SUPER + '` | Toggle split (rotate the dwindle split 90°) | — |
 | `SUPER + ;` / `SUPER + ALT + ;` | Cycle workspace layout: tiling → scrolling → floating / back | `SUPER + ALT + L` unbound |
 | `SUPER + SHIFT + /` | Keybindings cheatsheet | 1Password |
 | `SUPER + E` | File manager | — (`SUPER + SHIFT + F` still works too) |
+| `SUPER + I` | Toggle idle locking | — (moved from `SUPER + CTRL + I`) |
+| `SUPER + CTRL + I` | Switch input method (`fcitx5-remote -t`) | Toggle idle locking → `SUPER + I` |
 
 Omarchy defaults that replace old habits:
 
@@ -110,7 +112,6 @@ Omarchy defaults that replace old habits:
 | `SUPER + V` float | `SUPER + T`; `SUPER + O` pops a window out (float + pin) |
 | `SUPER + M` move submap | `SUPER + SHIFT + H/J/K/L` swap; `SUPER + M` minimizes to the dock |
 | `SUPER + SHIFT + R` resize submap | `SUPER + minus` / `equal` (± `SHIFT` for height, `ALT` fine, `CTRL` coarse) |
-| `SUPER + CTRL + I` input toggle | `SUPER + I` (`SUPER + CTRL + I` toggles idle locking) |
 | `ALT + TAB` hyprswitch | `ALT + TAB` cycles windows |
 | `SUPER + TAB` cycle windows | `SUPER + TAB` next workspace |
 | `Print` / `SUPER + CTRL + SHIFT + 3/4` hyprshot | `Print` (`TAB`/arrows pick a window, `RETURN` captures it) |
@@ -149,7 +150,7 @@ hyprswitch and swayosd also drop out: they were started from the old `hyprland.l
   - **Socket:** `listen_on unix:/tmp/kitty` is dropped in favour of Omarchy's per-process socket. Omarchy uses that socket to open a new terminal in the same folder, and kitty-scrollback.nvim works with it too, since the plugin only needs `listen_on` to be set.
   - **Defaults:** Omarchy's `/etc/xdg/kitty/kitty.conf` is loaded underneath this file, which adds 14px padding, a powerline tab bar, and a non-blinking block cursor. Set `window_padding_width 0` to remove the padding.
 
-**Added:** `omarchy-prestow.sh` and this file.
+**Added:** `omarchy-prestow.sh`, this file, and `omarchy-plugins/`: the `katt.input-method` bar widget, which shows the current fcitx5 input method. Omarchy's own keyboard-layout widget only shows xkb layouts.
 
 **Unchanged:** fish, nvim, tmux, yazi, MangoHud, fontconfig, opencode.
 

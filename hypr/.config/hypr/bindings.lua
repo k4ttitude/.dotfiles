@@ -1,18 +1,21 @@
 -- Personal keybindings, loaded after Omarchy's defaults.
--- o.rebind removes Omarchy's binding on the same keys first; Hyprland would
+-- rebind removes Omarchy's binding on the same keys first; Hyprland would
 -- otherwise run both.
 -- See every binding: omarchy menu keybindings --print (or SUPER + SHIFT + /)
 
--- vicinae; the apps launcher it replaces gets the Omarchy menu
-o.rebind("SUPER + SPACE", "Vicinae", "vicinae toggle")
+local function rebind(keys, ...)
+  hl.unbind(keys)
+  o.bind(keys, ...)
+end
+
+-- vicinae; SUPER + SPACE stays the Omarchy menu
 o.bind("ALT + SPACE", "Vicinae", "vicinae toggle")
-o.rebind("SUPER + ALT + SPACE", "Omarchy menu", { menu = "root" })
 
 -- hjkl focus; Omarchy's J/K/L actions move elsewhere
 o.bind("SUPER + H", "Focus on left window", hl.dsp.focus({ direction = "l" }))
-o.rebind("SUPER + J", "Focus on below window", hl.dsp.focus({ direction = "d" }))
-o.rebind("SUPER + K", "Focus on above window", hl.dsp.focus({ direction = "u" }))
-o.rebind("SUPER + L", "Focus on right window", hl.dsp.focus({ direction = "r" }))
+rebind("SUPER + J", "Focus on below window", hl.dsp.focus({ direction = "d" }))
+rebind("SUPER + K", "Focus on above window", hl.dsp.focus({ direction = "u" }))
+rebind("SUPER + L", "Focus on right window", hl.dsp.focus({ direction = "r" }))
 
 -- hjkl swap, matching Omarchy's SUPER + SHIFT + arrows
 o.bind("SUPER + SHIFT + H", "Swap window to the left", hl.dsp.window.swap({ direction = "l" }))
@@ -27,7 +30,11 @@ o.bind("SUPER + semicolon", "Cycle workspace layout", "omarchy-hyprland-workspac
 o.bind("SUPER + ALT + semicolon", "Cycle workspace layout back", "omarchy-hyprland-workspace-layout-toggle back")
 
 -- keybindings cheatsheet (replaces 1Password's binding)
-o.rebind("SUPER + SHIFT + SLASH", "Keybindings", "omarchy-menu-keybindings")
+rebind("SUPER + SHIFT + SLASH", "Keybindings", "omarchy-menu-keybindings")
 
 -- file manager
 o.bind("SUPER + E", "File manager", { omarchy = "nautilus" })
+
+-- idle locking moves to SUPER + I; SUPER + CTRL + I switches input method
+o.bind_toggle("SUPER + I", "Toggle locking on idle", "idle")
+rebind("SUPER + CTRL + I", "Switch input method", "fcitx5-remote -t")

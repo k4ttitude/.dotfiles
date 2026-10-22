@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "katt.input-method",
+  "name": "Input method",
+  "version": "1.0.0",
+  "author": "katt",
+  "description": "Current fcitx5 input method, click toggles",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "InputMethod.qml"
+  },
+  "barWidget": {
+    "displayName": "Input method",
+    "description": "Current fcitx5 input method, click toggles",
+    "category": "Compositor",
+    "allowMultiple": false
+  }
+}
