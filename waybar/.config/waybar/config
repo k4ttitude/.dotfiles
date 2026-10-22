@@ -57,7 +57,11 @@
             "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "pavucontrol"
+        "tooltip-format": "{desc}",
+        "on-click": "~/.config/hypr/bin/volume-popup.sh",
+        "on-click-right": "swayosd-client --output-volume mute-toggle",
+        "on-scroll-up": "swayosd-client --output-volume +5 --max-volume 100",
+        "on-scroll-down": "swayosd-client --output-volume -5"
     }
 }
 

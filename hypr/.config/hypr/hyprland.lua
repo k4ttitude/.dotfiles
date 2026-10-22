@@ -41,6 +41,7 @@ hl.on("hyprland.start", function()
     -- fcitx5 starts via /etc/xdg/autostart/org.fcitx.Fcitx5.desktop (uwsm/xdg-desktop-autostart)
     hl.exec_cmd("hyprswitch init --show-title &")
     hl.exec_cmd("vicinae server")
+    hl.exec_cmd("swayosd-server")
 end)
 
 
@@ -234,6 +235,12 @@ hl.bind(mainMod .. " + CTRL + SHIFT + 3", hl.dsp.exec_cmd("hyprshot -m window -m
 hl.bind(mainMod .. " + CTRL + SHIFT + 4", hl.dsp.exec_cmd("hyprshot -m region --freeze -o ~/Pictures/Screenshots"))
 hl.bind("Print",                          hl.dsp.exec_cmd("hyprshot -m active -m output --freeze -o ~/Pictures/Screenshots"))
 
+-- volume (swayosd shows the OSD)
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume +5 --max-volume 100"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume -5"),                   { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"),          { locked = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"),           { locked = true })
+
 -- recording
 hl.bind(mainMod .. " + CTRL + 0",     hl.dsp.exec_cmd(hyprBin .. "/obs/start_recording"))
 hl.bind(mainMod .. " + CTRL + minus", hl.dsp.exec_cmd(hyprBin .. "/obs/stop_recording"))
@@ -302,6 +309,15 @@ hl.window_rule({
 })
 
 hl.window_rule({ match = { class = "^mpv$" }, float = true })
+
+-- volume popup (waybar speaker icon), top right under the bar
+hl.window_rule({
+    match = { class = "^com.saivert.pwvucontrol$" },
+    float = true,
+    pin   = true,
+    size  = { 640, 560 }, -- narrower makes pwvucontrol switch to a cramped bottom tab bar
+    move  = { "monitor_w-648", "38" },  -- width + 8px gap; window_w is evaluated before size applies
+})
 
 -- flameshot
 hl.window_rule({ match = { class = "^(flameshot)$" }, float = true, move = { 0, 0 }, pin = true })
