@@ -1,0 +1,17 @@
+steampowered.com
+steamcommunity.com
+steamstatic.com
+steamcontent.com
+steamserver.net
+steamusercontent.com
+steam-chat.com
+steamgames.com
+steam.tv
+steamdeck.com
+s.team
+valvesoftware.com
+steamcdn-a.akamaihd.net
+steamstore-a.akamaihd.net
+steamcommunity-a.akamaihd.net
+steamuserimages-a.akamaihd.net
+steampipe.akamaized.net
