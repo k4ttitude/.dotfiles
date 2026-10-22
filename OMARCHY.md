@@ -8,41 +8,68 @@ The `omarchy` branch adapts these dotfiles to [Omarchy](https://github.com/omaco
 
 Omarchy only installs from its ISO (omarchy.org): either it takes a whole drive, or it installs into unpartitioned space. There is no script to run on top of an existing Arch install.
 
-- **Pick a drive.** `nvme1n1` holds `/boot`, `/` *and* `/home`, `nvme0n1` is Windows, `sda` is the Steam library (`/mnt/steam`). None has free space, so a full-disk install wipes whichever drive you choose. Back up `/home` (including `~/.ssh`, needed to clone the submodules) if it's `nvme1n1`.
-- **Turn Secure Boot off.** The Omarchy installer requires it. It's currently on, with your own sbctl keys.
-- **Expect a different boot and disk setup.** Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS encryption, and btrfs with snapper snapshots. Windows then boots from the Limine menu.
-- Save the package list: `pacman -Qqe > pkglist.txt`, kept with the backup.
-- Push this branch.
+The plan below installs onto `nvme1n1` (the current `/boot`, `/` and `/home`). `nvme0n1` (Windows) and `sda` (Steam library, `/mnt/steam`) aren't touched, so the backups go on `sda`.
+
+1. **Push this branch:** `git -C ~/.dotfiles push -u origin omarchy`.
+2. **Back up keys and the package list** to the Steam drive:
+   ```fish
+   mkdir -p /mnt/steam/omarchy-backup
+   tar -czf /mnt/steam/omarchy-backup/keys.tar.gz -C ~ .ssh .gnupg
+   pacman -Qqe  > /mnt/steam/omarchy-backup/pkglist.txt       # everything explicitly installed
+   pacman -Qqem > /mnt/steam/omarchy-backup/pkglist-aur.txt   # the AUR / foreign subset
+   tar -tzf /mnt/steam/omarchy-backup/keys.tar.gz             # check the archive lists both dirs
+   ```
+   `sda` isn't encrypted. That's acceptable for `id_ed25519` because it has a passphrase. `~/.gnupg` holds no secret keys, only imported public keys, so it's backed up just in case.
+3. **Copy anything else from `/home`** you want to keep (documents, browser profiles, game saves outside Steam) to `sda` or another drive. Everything on `nvme1n1` is wiped.
+4. **Turn Secure Boot off** in the BIOS. It's currently on, with your own sbctl keys.
+5. **Write the ISO** to a USB stick and install onto `nvme1n1`. Use a wired or 2.4GHz keyboard, since the disk password is asked for at boot.
+
+Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS encryption, and btrfs with snapper snapshots. Windows should appear in the Limine menu. If it doesn't, the BIOS boot menu can still start it from `nvme0n1`.
 
 ## After installing
 
-```bash
-# 1. Dotfiles
-git clone git@github.com:k4ttitude/.dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-git checkout omarchy
-git submodule update --init
-
-# 2. Packages Omarchy doesn't ship
-yay -S stow vicinae-bin fcitx5-bamboo fish kitty yazi mangohud ttf-meslo-nerd
-
-# 3. Move aside the Omarchy defaults stow would collide with, then stow
-./omarchy-prestow.sh -n       # preview
-./omarchy-prestow.sh          # moves them to ~/omarchy-defaults-<timestamp>/
-./install.sh
-```
-
-Then:
-
-- **Terminal:** `omarchy default terminal kitty`, since `SUPER + RETURN` opens foot by default.
-- **SSH agent:** run `omarchy-setup-security-ssh-agent`. It replaces the `SSH_AUTH_SOCK` line that used to be in `uwsm/env`.
-- **Input method:** add Bamboo next to `keyboard-us` in `fcitx5-configtool`. `SUPER + I` / `SUPER + SHIFT + I` cycle between them.
-- **Shell:** `chsh -s /usr/bin/fish`, then `fisher update`.
-- **tmux:** Omarchy writes `~/.config/tmux/tmux.conf`, and yours is `~/.tmux.conf`. Move Omarchy's into the `~/omarchy-defaults-*` folder so only yours applies.
-- **Wallpaper:** copy `~/.config/hypr/backgrounds/interstellar.jpg` into `~/.config/omarchy/backgrounds/<current theme>/` and pick it with `SUPER + CTRL + W`.
-- **Corners:** leave *Appearance > corners* on **theme**. Picking sharp or rounded there overrides `looknfeel.lua`.
-- Log out and back in, because `uwsm/env` is only read at session start.
-- Check for clashing binds: `omarchy menu keybindings --print`.
+1. **Mount the Steam drive.** It holds the backups. The UUID is from the old `/etc/fstab`; confirm it with `lsblk -f`.
+   ```bash
+   sudo mkdir -p /mnt/steam
+   echo 'UUID=deb8085e-5c13-4097-bbc7-8c8ac8e1376d /mnt/steam ext4 rw,relatime 0 2' | sudo tee -a /etc/fstab
+   sudo systemctl daemon-reload && sudo mount /mnt/steam
+   ```
+2. **Restore keys:**
+   ```bash
+   tar -xzf /mnt/steam/omarchy-backup/keys.tar.gz -C ~
+   chmod 700 ~/.ssh ~/.gnupg && chmod 600 ~/.ssh/id_ed25519
+   ```
+3. **Clone the dotfiles.** The repo and both submodules (nvim, opencode) clone over SSH.
+   ```bash
+   git clone git@github.com:k4ttitude/.dotfiles.git ~/.dotfiles
+   cd ~/.dotfiles && git checkout omarchy && git submodule update --init
+   ```
+4. **Install the packages the dotfiles need:**
+   ```bash
+   yay -S --needed stow vicinae-bin fcitx5-bamboo fish kitty yazi mangohud ttf-meslo-nerd
+   ```
+5. **Stow:**
+   ```bash
+   ./omarchy-prestow.sh -n   # preview what gets moved aside
+   ./omarchy-prestow.sh      # moves Omarchy's copies to ~/omarchy-defaults-<timestamp>/
+   ./install.sh
+   ```
+6. **Configure Omarchy:**
+   - `omarchy default terminal kitty`, since `SUPER + RETURN` opens foot by default.
+   - `omarchy-setup-security-ssh-agent`. It replaces the `SSH_AUTH_SOCK` line that used to be in `uwsm/env`.
+   - **Input method:** add Bamboo next to `keyboard-us` in `fcitx5-configtool`. `SUPER + I` / `SUPER + SHIFT + I` cycle between them.
+   - **Shell:** `chsh -s /usr/bin/fish`, then run `fisher update` inside fish.
+   - **tmux:** move `~/.config/tmux/tmux.conf` (Omarchy's) into the `~/omarchy-defaults-*` folder so only your `~/.tmux.conf` applies.
+   - **Wallpaper:** copy `~/.config/hypr/backgrounds/interstellar.jpg` into `~/.config/omarchy/backgrounds/<current theme>/` and pick it with `SUPER + CTRL + W`.
+   - **Corners:** leave *Appearance > corners* on **theme**. Picking sharp or rounded there overrides `looknfeel.lua`.
+7. **Log out and back in.** `uwsm/env` is only read at login.
+8. **Check:**
+   - `omarchy menu keybindings --print` shows no key bound twice.
+   - `SUPER + SPACE` opens vicinae, and `SUPER + H/J/K/L` move focus.
+   - Window corners are rounded, and kitty recolors when you switch themes (`SUPER + CTRL + T`).
+   - `kitty_mod+h` opens the scrollback in nvim.
+9. **Games:** `yay -S steam`, then add `/mnt/steam/SteamLibrary` under *Steam > Settings > Storage*.
+10. **Everything else:** reinstall from `/mnt/steam/omarchy-backup/pkglist.txt` and `pkglist-aur.txt` as you need it. Don't feed the whole list to `yay`. It contains things Omarchy replaces or conflicts with: rEFInd, cosmic-greeter, waybar, dunst, swayosd, wofi, rofi, bemenu, hyprswitch, hyprpaper, hypridle, hyprpolkitagent, iwd, and the stock `linux` kernel. Pick out the apps you use, such as discord, vesktop, obs-studio, nordvpn-bin, coolercontrol-bin, lact, zen-browser-bin, heroic, lutris and docker.
 
 ## Keybindings
 
