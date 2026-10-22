@@ -6,7 +6,7 @@ Moving to Omarchy? See [OMARCHY.md](OMARCHY.md).
 
 - **install.sh** - Loops through all directories and stows each one
 - **clean.sh** - Loops through all directories and unstows each one
-- **stow.sh** - Stows a single package, supports custom target via .target file
+- **stow.sh** - Stows a single package, supports custom target via .target file, `.mkdir` (dirs to create first so stow never links them whole) and a `.copy/` subtree (copied, not linked, into dirs that already exist)
 - **unstow.sh** - Unstows a single package, supports custom target via .target file
 - **wots.sh** - Moves a config from ~/.config into a package structure and stows it
 - **unwots.sh** - Reverses wots.sh - unstows, moves config back to home, removes package

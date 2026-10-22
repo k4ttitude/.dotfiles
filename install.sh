@@ -18,7 +18,8 @@ for folder in $(ls -d */ | cut -f1 -d '/'); do
   fi
 
   echo "copy $folder -> $target"
-  for file in $(cd "$folder" && find . -type f ! -name .target -printf '%P\n'); do
+  # .mkdir and .copy/ are stow.sh features for $HOME packages, not files to install.
+  for file in $(cd "$folder" && find . -type f ! -name .target ! -name .mkdir ! -path './.copy/*' -printf '%P\n'); do
     dest="${target%/}/$file"
     if cmp -s "$folder/$file" "$dest"; then
       echo "unchanged $dest"

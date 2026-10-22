@@ -150,7 +150,11 @@ hyprswitch and swayosd also drop out: they were started from the old `hyprland.l
   - **Socket:** `listen_on unix:/tmp/kitty` is dropped in favour of Omarchy's per-process socket. Omarchy uses that socket to open a new terminal in the same folder, and kitty-scrollback.nvim works with it too, since the plugin only needs `listen_on` to be set.
   - **Defaults:** Omarchy's `/etc/xdg/kitty/kitty.conf` is loaded underneath this file, which adds 14px padding, a powerline tab bar, and a non-blinking block cursor. Set `window_padding_width 0` to remove the padding.
 
-**Added:** `omarchy-prestow.sh`, this file, and `omarchy-plugins/`: the `katt.input-method` bar widget, which shows the current fcitx5 input method. Omarchy's own keyboard-layout widget only shows xkb layouts.
+**Added:** `omarchy-prestow.sh`, this file, and `omarchy/`:
+
+- `katt.input-method`: a bar widget that shows the current fcitx5 input method. Omarchy's own keyboard-layout widget only shows xkb layouts.
+- `themes/artzen/colors.toml`: the Artzen palette with a real green (`color2`/`color10`), so lazygit and git diffs show additions in green instead of the theme's pink. It lives under `.copy/` because Omarchy ignores symlinks inside a theme cloned from git, so `stow.sh` copies it into the clone. Install the theme first (`omarchy theme install https://github.com/tahfizhabib/omarchy-artzen-theme`), then run `./stow.sh omarchy` and `omarchy theme set artzen`. Reinstalling the theme deletes the copy, so run both again afterwards.
+- `.mkdir` creates `~/.config/omarchy/plugins` before stowing, so stow links only the `katt.input-method` folder and never all of `plugins/`. Otherwise plugins Omarchy installs later could end up inside this repo.
 
 **Unchanged:** fish, nvim, tmux, yazi, MangoHud, fontconfig, opencode.
 
