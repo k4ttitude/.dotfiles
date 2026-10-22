@@ -101,14 +101,19 @@ hyprswitch and swayosd also drop out: they were started from the old `hyprland.l
   - **Dropped as redundant:** environment variables, the PiP and suppress-maximize rules (Omarchy has both), the firefox and flameshot rules (neither is installed), the pwvucontrol popup rule, and `WLR_USE_DAMAGE` (Hyprland no longer uses wlroots).
   - `GDK_SCALE` is set to `1` for the 1440p monitor. Omarchy's template sets `2`.
 - `uwsm/env`: trimmed to the variables Omarchy doesn't set.
+- `kitty/kitty.conf`:
+  - **Colors:** the hardcoded Monokai colors (and `cursor none`, `background_opacity 1`) are replaced with an include of the current Omarchy theme, so theme switches and the glassy look reach kitty.
+  - **Socket:** `listen_on unix:/tmp/kitty` is dropped in favour of Omarchy's per-process socket. Omarchy uses that socket to open a new terminal in the same folder, and kitty-scrollback.nvim works with it too, since the plugin only needs `listen_on` to be set.
+  - **Defaults:** Omarchy's `/etc/xdg/kitty/kitty.conf` is loaded underneath this file, which adds 14px padding, a powerline tab bar, and a non-blinking block cursor. Set `window_padding_width 0` to remove the padding.
 
 **Added:** `omarchy-prestow.sh` and this file.
 
-**Unchanged:** fish, kitty, nvim, tmux, yazi, MangoHud, fontconfig, opencode.
+**Unchanged:** fish, nvim, tmux, yazi, MangoHud, fontconfig, opencode.
 
 ## Not verified yet
 
 - **Testing:** this config hasn't run in a real Omarchy session. The Lua passes `luac -p`, and `omarchy-prestow.sh` + `install.sh` were tested against a mock home seeded with Omarchy's default files.
-- **Theming:** kitty keeps its own Monokai colours, so theme switches won't recolour it. Add `include ~/.local/state/omarchy/current/theme/kitty.conf` to the top of `kitty.conf` to opt in. vicinae has no Omarchy theme integration.
+- **Theming:** vicinae has no Omarchy theme integration, so theme switches won't recolour it.
+- **Omarchy edits stowed files:** the font menu (`omarchy-font-set`) and the text-size setting rewrite `font_family` / `font_size` in `kitty.conf` using `sed --follow-symlinks`, which edits the file in this repo. Expect a `git diff` after using them.
 - **Workspace numbers:** Omarchy numbers workspaces per monitor (monitor 1 gets 1–10), so the Steam (4) and games (3) rules assume a single monitor.
 - **Shell:** Omarchy's shell aliases and functions are bash-only, so fish doesn't get them.
