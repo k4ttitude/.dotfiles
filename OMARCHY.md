@@ -77,7 +77,7 @@ Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS enc
     ```bash
     DISK=/dev/nvmeXn1                                # the 931.5 GB drive
     sudo wipefs -a "$DISK"                           # removes Windows' partition table
-    sudo sgdisk -n1:0:0 -t1:8300 -c1:games "$DISK"   # one Linux partition spanning the drive
+    printf 'label: gpt\ntype=L, name=games\n' | sudo sfdisk "$DISK"   # one Linux partition spanning the drive
     sudo mkfs.ext4 -L games "${DISK}p1"
     sudo mkdir -p /mnt/games
     echo "UUID=$(sudo blkid -s UUID -o value "${DISK}p1") /mnt/games ext4 rw,relatime 0 2" | sudo tee -a /etc/fstab
