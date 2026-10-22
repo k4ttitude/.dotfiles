@@ -32,8 +32,9 @@ o.bind("SUPER + ALT + semicolon", "Cycle workspace layout back", "omarchy-hyprla
 -- keybindings cheatsheet (replaces 1Password's binding)
 rebind("SUPER + SHIFT + SLASH", "Keybindings", "omarchy-menu-keybindings")
 
--- file manager
+-- file manager; SUPER + SHIFT + F goes to tiled full screen instead
 o.bind("SUPER + E", "File manager", { omarchy = "nautilus" })
+rebind("SUPER + SHIFT + F", "Tiled full screen", "omarchy-hyprland-window-tiled-fullscreen-toggle")
 
 -- idle locking moves to SUPER + I; SUPER + CTRL + I switches input method
 o.bind_toggle("SUPER + I", "Toggle locking on idle", "idle")
