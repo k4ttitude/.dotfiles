@@ -1,0 +1,8 @@
+# Installed by fisher from fish_plugins (`fisher update` restores them)
+/functions/*
+/completions/*
+/conf.d/*
+!/functions/_fzf_search_zoxide.fish
+
+# Universal variables: machine state rewritten by fish/fisher, regenerated from config.fish and plugins
+/fish_variables
