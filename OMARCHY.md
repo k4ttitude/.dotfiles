@@ -8,7 +8,7 @@ The `omarchy` branch adapts these dotfiles to [Omarchy](https://github.com/omaco
 
 Omarchy only installs from its ISO (omarchy.org): either it takes a whole drive, or it installs into unpartitioned space. There is no script to run on top of an existing Arch install.
 
-The plan below installs onto `nvme1n1` (the current `/boot`, `/` and `/home`). `nvme0n1` (Windows) and `sda` (Steam library, `/mnt/steam`) aren't touched, so the backups go on `sda`.
+The plan below installs onto `nvme1n1` (465.8 GB: the current `/boot`, `/` and `/home`). `sda` (Steam library, `/mnt/steam`) isn't touched, so the backups go there. Windows (`nvme0n1`, 931.5 GB) is being dropped. Its bootloader lives on `nvme1n1`'s EFI partition, so it stops booting once Omarchy is installed. Its drive becomes a second games drive afterwards.
 
 1. **Push this branch:** `git -C ~/.dotfiles push -u origin omarchy`.
 2. **Back up keys and the package list** to the Steam drive:
@@ -21,10 +21,14 @@ The plan below installs onto `nvme1n1` (the current `/boot`, `/` and `/home`). `
    ```
    `sda` isn't encrypted. That's acceptable for `id_ed25519` because it has a passphrase. `~/.gnupg` holds no secret keys, only imported public keys, so it's backed up just in case.
 3. **Copy anything else from `/home`** you want to keep (documents, browser profiles, game saves outside Steam) to `sda` or another drive. Everything on `nvme1n1` is wiped.
-4. **Turn Secure Boot off** in the BIOS. It's currently on, with your own sbctl keys.
-5. **Write the ISO** to a USB stick and install onto `nvme1n1`. Use a wired or 2.4GHz keyboard, since the disk password is asked for at boot.
+4. **Copy anything you want from Windows.** It won't boot after the install, and its drive is wiped later. Mount it read-only from here:
+   ```fish
+   sudo mkdir -p /mnt/win && sudo mount -o ro /dev/nvme0n1p2 /mnt/win
+   ```
+5. **Turn Secure Boot off** in the BIOS. It's currently on, with your own sbctl keys.
+6. **Write the ISO** to a USB stick and install onto the **465.8 GB** drive. Pick by size: drive names can change between boots. Use a wired or 2.4GHz keyboard, since the disk password is asked for at boot.
 
-Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS encryption, and btrfs with snapper snapshots. Windows should appear in the Limine menu. If it doesn't, the BIOS boot menu can still start it from `nvme0n1`.
+Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS encryption, and btrfs with snapper snapshots.
 
 ## After installing
 
@@ -69,7 +73,19 @@ Omarchy installs Limine in place of rEFInd, the `linux-omarchy` kernel, LUKS enc
    - Window corners are rounded, and kitty recolors when you switch themes (`SUPER + CTRL + T`).
    - `kitty_mod+h` opens the scrollback in nvim.
 9. **Games:** `yay -S steam`, then add `/mnt/steam/SteamLibrary` under *Steam > Settings > Storage*.
-10. **Everything else:** reinstall from `/mnt/steam/omarchy-backup/pkglist.txt` and `pkglist-aur.txt` as you need it. Don't feed the whole list to `yay`. It contains things Omarchy replaces or conflicts with: rEFInd, cosmic-greeter, waybar, dunst, swayosd, wofi, rofi, bemenu, hyprswitch, hyprpaper, hypridle, hyprpolkitagent, iwd, and the stock `linux` kernel. Pick out the apps you use, such as discord, vesktop, obs-studio, nordvpn-bin, coolercontrol-bin, lact, zen-browser-bin, heroic, lutris and docker.
+10. **Turn the old Windows drive into a games drive.** Find it by size (931.5 GB). The `nvmeXn1` name may have changed, so the commands use `$DISK`. Check it with `lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINTS` before wiping.
+    ```bash
+    DISK=/dev/nvmeXn1                                # the 931.5 GB drive
+    sudo wipefs -a "$DISK"                           # removes Windows' partition table
+    sudo sgdisk -n1:0:0 -t1:8300 -c1:games "$DISK"   # one Linux partition spanning the drive
+    sudo mkfs.ext4 -L games "${DISK}p1"
+    sudo mkdir -p /mnt/games
+    echo "UUID=$(sudo blkid -s UUID -o value "${DISK}p1") /mnt/games ext4 rw,relatime 0 2" | sudo tee -a /etc/fstab
+    sudo systemctl daemon-reload && sudo mount /mnt/games && sudo chown katt:katt /mnt/games
+    ```
+    Then add `/mnt/games` as a second Steam library, and in Heroic and Lutris set it as the install folder.
+    Clean up the dead rEFInd and Windows Boot Manager entries in the firmware: list them with `efibootmgr` and delete each with `sudo efibootmgr -b XXXX -B`.
+11. **Everything else:** reinstall from `/mnt/steam/omarchy-backup/pkglist.txt` and `pkglist-aur.txt` as you need it. Don't feed the whole list to `yay`. It contains things Omarchy replaces or conflicts with: rEFInd, cosmic-greeter, waybar, dunst, swayosd, wofi, rofi, bemenu, hyprswitch, hyprpaper, hypridle, hyprpolkitagent, iwd, and the stock `linux` kernel. Pick out the apps you use, such as discord, vesktop, obs-studio, nordvpn-bin, coolercontrol-bin, lact, zen-browser-bin, heroic, lutris and docker.
 
 ## Keybindings
 
