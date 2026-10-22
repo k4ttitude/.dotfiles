@@ -1,5 +1,7 @@
 # Dotfiles Management Scripts
 
+Moving to Omarchy? See [OMARCHY.md](OMARCHY.md).
+
 ## Explanation
 
 - **install.sh** - Loops through all directories and stows each one
@@ -8,6 +10,7 @@
 - **unstow.sh** - Unstows a single package, supports custom target via .target file
 - **wots.sh** - Moves a config from ~/.config into a package structure and stows it
 - **unwots.sh** - Reverses wots.sh - unstows, moves config back to home, removes package
+- **omarchy-prestow.sh** - Moves Omarchy's default configs out of the way so install.sh can stow over them (`-n` to preview)
 
 ## Examples
 
@@ -16,6 +19,6 @@
 ./clean.sh                # Remove all packages
 ./stow.sh nvim            # Install nvim package
 ./unstow.sh nvim          # Remove nvim package
-./wots.sh waybar          # Convert ~/.config/waybar to stow package
-./unwots.sh waybar        # Convert stow package back to ~/.config/waybar
+./wots.sh btop            # Convert ~/.config/btop to stow package
+./unwots.sh btop          # Convert stow package back to ~/.config/btop
 ```
